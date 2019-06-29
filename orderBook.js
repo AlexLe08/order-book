@@ -12,18 +12,32 @@ function checkForMatchingOrder(existingBook, incomingOrder) {
   }
   else {
     // There is at least 1 order that can potentially be fulfilled.
-    var potentialMatchingOrders = 0
-    existingBook.forEach(function(order) {
-      // If quantity and price match between the incoming order and existing orders, count it and fulfill it somehow
-      if (order.type !== incomingOrder.type && order.quantity === incomingOrder.quantity && order.price === incomingOrder.quantity) {
-        potentialMatchingOrders += 1
+    var potentialMatchingOrders = false
+    var updatedList = existingBook
+    var order
+    var i
+
+    for (i=0;i<existingBook.length;i++) {
+      // If quantity and price match between the incoming order and first existing orders, count it and fulfill it somehow
+      order = existingBook[i]
+
+      if (order.type !== incomingOrder.type && order.quantity === incomingOrder.quantity && order.price === incomingOrder.price) {
+        potentialMatchingOrders = true
+        existingBook.splice(i, 1)
+        updatedList = existingBook
+        return updatedList
       }
       
-    })
-    // No matches means add incoming order to the book
-    if (potentialMatchingOrders === 0) {
-      return addedOrderToBook(existingBook,incomingOrder)
     }
+    // No matches means add incoming order to the book
+    if (!potentialMatchingOrders) {
+      updatedList = addedOrderToBook(existingBook,incomingOrder)
+      return updatedList
+    }
+    else {
+      return updatedList
+    }
+    
   }
   //console.log(existingBook)
   //return existingBook
